@@ -19,7 +19,7 @@ def generate_ID(length=8):
 
 def interpolate_path(path):
     """Interpolates the path to have a time resolution of 1ms"""
-    interpolated_path = []
+    interpolated_points = []
     for i in range(len(path) - 1):
         x1, y1, t1 = path[i]['x'], path[i]['y'], path[i]['t']
         x2, y2, t2 = path[i + 1]['x'], path[i + 1]['y'], path[i + 1]['t']
@@ -31,8 +31,8 @@ def interpolate_path(path):
                 ratio = ms / duration
                 x = math.floor(x1 + ratio * (x2 - x1))
                 y = math.floor(y1 + ratio * (y2 - y1))
-                interpolated_path.append((x, y, t1 + ms))
-    return interpolated_path
+                interpolated_points.append({"x": x, "y": y, "t": t1 + ms})
+    return path+interpolated_points
 
 def process_record(batch_id, record):
     """Processes a single record and stores it in DynamoDB"""
@@ -70,17 +70,12 @@ def handler(event,context):
         futures = [executor.submit(process_record, batch_id, record) for record in records]
         
         for future in as_completed(futures):
-            try:
-                item = future.result()
-                items.append(item)
-                print("Prepared item: ", item)
-            except Exception as exc:
-                print(f"Generated an exception: {exc}")
+            item = future.result()
+            items.append(item)
 
     # Perform batch write
     with table.batch_writer() as batch:
         for item in items:
             batch.put_item(Item=item)
-            print("Batch writing item: ", item)
 
     return { 'statusCode': 200, 'body': 'Records stored successfully' }
