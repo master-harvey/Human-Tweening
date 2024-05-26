@@ -4,6 +4,7 @@ import json
 import random
 import string
 import math
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table(environ['TABLE_NAME'])
@@ -20,8 +21,8 @@ def interpolate_path(path):
     """Interpolates the path to have a time resolution of 1ms"""
     interpolated_path = []
     for i in range(len(path) - 1):
-        x1, y1, t1 = path[i]
-        x2, y2, t2 = path[i + 1]
+        x1, y1, t1 = path[i]['x'], path[i]['y'], path[i]['t']
+        x2, y2, t2 = path[i + 1]['x'], path[i + 1]['y'], path[i + 1]['t']
         
         # Calculate the number of interpolation points needed
         duration = t2 - t1
@@ -32,6 +33,21 @@ def interpolate_path(path):
                 y = math.floor(y1 + ratio * (y2 - y1))
                 interpolated_path.append((x, y, t1 + ms))
     return interpolated_path
+
+def process_record(batch_id, record):
+    """Processes a single record and stores it in DynamoDB"""
+    item = {
+        'batch_id': batch_id,
+        'start_timestamp': record['start_timestamp'],
+        'source': record['source'],
+        'end_timestamp': record['end_timestamp'],
+        'destination': record['destination'],
+        'raw_path': record['path'],
+        'translation': [record['destination'][0] - record['source'][0], record['destination'][1] - record['source'][1]],
+        'duration': record['end_timestamp'] - record['start_timestamp'],
+        'interpolated_path': interpolate_path(record['path'])
+    }
+    return item
 
 def handler(event,context):
     """Takes a list of record objects from the path_collector UI and stores the time-series of 
@@ -48,22 +64,23 @@ def handler(event,context):
 
     records = event['body'] #should be an array of record objects
     batch_id = generate_ID() #the id for this batch of records
-
-    for record in records:
-        # Store the record in DynamoDB
-        item = {
-            'batch_id': batch_id,
-            'start_timestamp': record['start_timestamp'],
-            'source': record['source'],
-            'end_timestamp': record['end_timestamp'],
-            'destination': record['destination'],
-            'raw_path': record['path'],
-            'duration': record['end_timestamp'] - record['start_timestamp'],
-            'interpolated_path': interpolate_path(record['path'])
-        }
-
-        print("Item: ", item)
+    
+    items = []
+    with ThreadPoolExecutor(max_workers=6) as executor:
+        futures = [executor.submit(process_record, batch_id, record) for record in records]
         
-        table.put_item(Item=item)
+        for future in as_completed(futures):
+            try:
+                item = future.result()
+                items.append(item)
+                print("Prepared item: ", item)
+            except Exception as exc:
+                print(f"Generated an exception: {exc}")
+
+    # Perform batch write
+    with table.batch_writer() as batch:
+        for item in items:
+            batch.put_item(Item=item)
+            print("Batch writing item: ", item)
 
     return { 'statusCode': 200, 'body': 'Records stored successfully' }
