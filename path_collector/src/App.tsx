@@ -53,7 +53,7 @@ function App() {
   // Sends the records as JSON to the endpoint
   async function recordData(data: any) {
     // process is defined during next.js build
-    await fetch("https://6p73hqkizxmi5swrvdkzd2es540wcrsv.lambda-url.us-east-2.on.aws/", {
+    fetch("https://6p73hqkizxmi5swrvdkzd2es540wcrsv.lambda-url.us-east-2.on.aws/", {
       method: "PUT",
       body: JSON.stringify(data),
       headers: { "Content-type": "application/json; charset=UTF-8" }
