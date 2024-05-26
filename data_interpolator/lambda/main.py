@@ -38,12 +38,14 @@ def handler(event,context):
     {"start_timestamp":n,"source":[x,y],"end_timestamp":m,"destination":[x,y],"path":[[x1,y1,t1],[x2,y2,t2],...]} 
     where tn is the unix timestamp in ms when the cursor had the position xn,yn. 
     The distance changes are interpolated such that the timeseries has a resolution of 1ms"""
+    print("EVENT: ", event, " :EVENT")
+
     try: #attempt to convert body from string to dict
-        event.body = json.loads(event.body)
+        event['body'] = json.loads(event['body'])
     except:
         pass
 
-    records = event.body #should be an array of record objects
+    records = event['body'] #should be an array of record objects
     batch_id = generate_ID() #the id for this batch of records
 
     for record in records:
@@ -57,7 +59,8 @@ def handler(event,context):
             'source': record['source'],
             'end_timestamp': record['end_timestamp'],
             'destination': record['destination'],
-            'path': json.dumps(interpolated_path)  # Store path as JSON string
+            'raw_path': json.dumps(record['path']),
+            'interpolated_path': json.dumps(interpolated_path)
         }
 
         print("Item: ", item)
