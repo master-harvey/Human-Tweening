@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import './App.css'
 
 // This app collects mouse path data
@@ -11,7 +11,7 @@ function App() {
   const [buttonPosition, setButtonPosition] = useState({ x: window.innerWidth / 2 - 9, y: 125 });
   const [lastClickData, setLastClickData] = useState({});
 
-  // Recorded positions of the mouse between clicks. Gets cleared after every click
+  // Recorded positions of the mouse between clicks. Gets cleared on submit
   const records = useRef([])
 
   // Recorded positions of the mouse between clicks. Gets cleared after every click
@@ -51,20 +51,24 @@ function App() {
   }
 
   // Sends the records as JSON to the endpoint
-  function recordData(data: any) {
+  async function recordData(data: any) {
     // process is defined during next.js build
-    fetch("https://6p73hqkizxmi5swrvdkzd2es540wcrsv.lambda-url.us-east-2.on.aws/", {
+    await fetch("https://6p73hqkizxmi5swrvdkzd2es540wcrsv.lambda-url.us-east-2.on.aws/", {
       method: "PUT",
       body: JSON.stringify(data),
       headers: { "Content-type": "application/json; charset=UTF-8" }
     })
+    records.current = [] // Clear records
   }
+
+  useEffect(() => {
+    if (records.current.length >= 5) {
+      recordData(records.current)
+    }
+  });
 
   return (
     <div className="App">
-      <div>
-        <p className="heading button" onClick={() => recordData(records.current)}>Submit</p>
-      </div>
       <div
         style={{
           position: 'absolute',
