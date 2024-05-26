@@ -16,9 +16,10 @@ export class PathDataInterpolatorStack extends Stack {
       environment: { "TABLE_NAME": table.tableName }
     })
     const functionURL = interpolateFunction.addFunctionUrl({
+      authType: lambda.FunctionUrlAuthType.NONE,
       cors: {
         allowedOrigins: ["https://human-tweening.vercel.app"],
-        allowedHeaders: ["*"],
+        allowedHeaders: ["content-type"],
         allowedMethods: [lambda.HttpMethod.PUT]
       }
     })
