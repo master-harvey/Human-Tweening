@@ -17,22 +17,22 @@ def generate_ID(length=8):
     random_string = ''.join(random.choice(characters) for _ in range(length))
     return random_string
 
-def interpolate_path(path):
-    """Interpolates the path to have a time resolution of 1ms"""
-    interpolated_points = []
-    for i in range(len(path) - 1):
-        x1, y1, t1 = path[i]['x'], path[i]['y'], path[i]['t']
-        x2, y2, t2 = path[i + 1]['x'], path[i + 1]['y'], path[i + 1]['t']
+# def interpolate_path(path): # Interpolation may not even be necessary, or even a consistent timeseries
+#     """Interpolates the path to have a time resolution of 1ms"""
+#     interpolated_points = []
+#     for i in range(len(path) - 1):
+#         x1, y1, t1 = path[i]['x'], path[i]['y'], path[i]['t']
+#         x2, y2, t2 = path[i + 1]['x'], path[i + 1]['y'], path[i + 1]['t']
         
-        # Calculate the number of interpolation points needed
-        duration = t2 - t1
-        if duration > 0:
-            for ms in range(duration + 1):
-                ratio = ms / duration
-                x = math.floor(x1 + ratio * (x2 - x1))
-                y = math.floor(y1 + ratio * (y2 - y1))
-                interpolated_points.append({"x": x, "y": y, "t": t1 + ms})
-    return path+interpolated_points
+#         # Calculate the number of interpolation points needed
+#         duration = t2 - t1
+#         if duration > 0:
+#             for ms in range(duration + 1):
+#                 ratio = ms / duration
+#                 x = math.floor(x1 + ratio * (x2 - x1))
+#                 y = math.floor(y1 + ratio * (y2 - y1))
+#                 interpolated_points.append({"x": x, "y": y, "t": t1 + ms})
+#     return path+interpolated_points
 
 def process_record(batch_id, record):
     """Processes a single record and stores it in DynamoDB"""
@@ -43,9 +43,10 @@ def process_record(batch_id, record):
         'end_timestamp': record['end_timestamp'],
         'destination': record['destination'],
         'raw_path': record['path'],
-        'translation': [record['destination'][0] - record['source'][0], record['destination'][1] - record['source'][1]],
-        'duration': record['end_timestamp'] - record['start_timestamp'],
-        'interpolated_path': interpolate_path(record['path'])
+        # Just store the data, calculations can be done localy during training
+        # 'translation': [record['destination'][0] - record['source'][0], record['destination'][1] - record['source'][1]],
+        # 'duration': record['end_timestamp'] - record['start_timestamp'],
+        # 'interpolated_path': interpolate_path(record['path'])
     }
     return item
 
