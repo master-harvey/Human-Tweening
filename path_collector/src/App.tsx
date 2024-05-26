@@ -31,8 +31,8 @@ function App() {
       //@ts-expect-error // Create a new record
       records.current.push({
         //@ts-expect-error // Record large vector
-        "start_timestamp": Number(lastClickData.t), "source": [lastClickData.x, screen.height - lastClickData.y], //subtract from screen.height to correct inverted coordinates
-        "end_timestamp": Number(t), "destination": [event.pageX, screen.height - event.pageY], //subtract from screen.height to correct inverted coordinates
+        "start_timestamp": lastClickData.t, "source": [lastClickData.x, screen.height - lastClickData.y], //subtract from screen.height to correct inverted coordinates
+        "end_timestamp": t, "destination": [event.pageX, screen.height - event.pageY], //subtract from screen.height to correct inverted coordinates
         // Record short vectors
         "path": path.current
       })
@@ -40,7 +40,7 @@ function App() {
     }
 
     // New previous mouse position
-    setLastClickData({ x: event.pageX, y: event.pageY, t: Date() })
+    setLastClickData({ x: event.pageX, y: event.pageY, t: t })
 
     // New button position
     const x = Math.floor(Math.random() * (window.innerWidth - 60));
