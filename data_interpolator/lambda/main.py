@@ -1,11 +1,19 @@
 from os import environ
 import boto3
 import json
-import numpy as np
-from uuid import uuid4
+import random
+import string
 
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table(environ['TABLE_NAME'])
+
+def generate_ID(length=8):
+    """Generates a random batch ID"""
+    # Define the character set to use: lowercase letters and digits
+    characters = string.ascii_lowercase + string.digits
+    # Generate a random string of the specified length
+    random_string = ''.join(random.choice(characters) for _ in range(length))
+    return random_string
 
 def interpolate_path(path):
     """Interpolates the path to have a time resolution of 1ms"""
@@ -36,7 +44,7 @@ def handler(event,context):
         pass
 
     records = event.body #should be an array of record objects
-    batch_id = uuid4() #the id for this batch of records
+    batch_id = generate_ID() #the id for this batch of records
 
     for record in records:
         # Interpolate the path
