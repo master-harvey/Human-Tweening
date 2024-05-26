@@ -6,6 +6,6 @@ A neural network project for generating Human like cursor movements. Takes a 2d 
 
 Fronted UI for collecting cursor path data
 
-### /data_interpolator
+### /data_pipeline
 
 Cloud infrastructure for storing and interpolating the data
