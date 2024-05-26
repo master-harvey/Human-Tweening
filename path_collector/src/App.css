@@ -6,3 +6,17 @@ html {
   text-align: center;
   color: #EA6;
 }
+
+.button {
+  background-color:black;
+  margin:auto;
+  width: fit-content;
+  padding: 5px;
+  border-radius: 8px;
+}
+
+.button:hover {
+  color: #D65;
+  background-color: gray;
+  cursor: pointer;
+}

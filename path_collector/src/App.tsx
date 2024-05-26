@@ -8,7 +8,7 @@ import './App.css'
 //   {"start_timestamp":n,"source":[x,y],"end_timestamp":m,"destination":[x,y],"path":[[x1,y1],[x2,y2],...]}
 
 function App() {
-  const [buttonPosition, setButtonPosition] = useState({ x: window.innerWidth / 2 - 9, y: 100 });
+  const [buttonPosition, setButtonPosition] = useState({ x: window.innerWidth / 2 - 9, y: 125 });
   const [lastClickData, setLastClickData] = useState({});
 
   // Recorded positions of the mouse between clicks. Gets cleared after every click
@@ -33,7 +33,7 @@ function App() {
         //@ts-expect-error // Record large vector
         "start_timestamp": lastClickData.t, "source": [lastClickData.x, screen.height - lastClickData.y], //subtract from screen.height to correct inverted coordinates
         "end_timestamp": t, "destination": [event.pageX, screen.height - event.pageY], //subtract from screen.height to correct inverted coordinates
-        // Record short vector
+        // Record short vectors
         "path": path.current
       })
       path.current = []
@@ -50,10 +50,8 @@ function App() {
     return { x, y };
   }
 
-  window.onclose = () => { recordData(records.current) }
-
   // Sends the records as JSON to the endpoint
-  async function recordData(data: any) {
+  function recordData(data: any) {
     //@ts-expect-error // process is defined during next.js build
     fetch(process.env.ENDPOINT, {
       method: "PUT",
@@ -64,6 +62,9 @@ function App() {
 
   return (
     <div className="App">
+      <div onClick={() => recordData(records.current)}>
+        <p className="heading button">Submit</p>
+      </div>
       <div
         style={{
           position: 'absolute',
