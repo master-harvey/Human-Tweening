@@ -27,7 +27,7 @@ function App() {
     const t = new Date().valueOf()
 
     //@ts-expect-error // Record data if possible
-    if (lastClickData.x && lastClickData.y && lastClickData.t) {
+    if (lastClickData.x && lastClickData.y && lastClickData.t && path.current.length > 5) {
       //@ts-expect-error // Create a new record
       records.current.push({
         //@ts-expect-error // Record large vector
