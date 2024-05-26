@@ -1,4 +1,4 @@
-import { Stack, StackProps, RemovalPolicy, CfnOutput, aws_lambda as lambda, aws_dynamodb as dynamo } from 'aws-cdk-lib';
+import { Stack, StackProps, RemovalPolicy, CfnOutput, aws_lambda as lambda, aws_dynamodb as dynamo, Duration } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
 export class PathDataInterpolatorStack extends Stack {
@@ -13,7 +13,7 @@ export class PathDataInterpolatorStack extends Stack {
 
     const interpolateFunction = new lambda.Function(this, "PathInterpolatorFunction", {
       code: lambda.Code.fromAsset("./lambda"), runtime: lambda.Runtime.PYTHON_3_12, handler: "main.handler",
-      environment: { "TABLE_NAME": table.tableName }
+      environment: { "TABLE_NAME": table.tableName }, timeout: Duration.seconds(30)
     })
     const functionURL = interpolateFunction.addFunctionUrl({
       authType: lambda.FunctionUrlAuthType.NONE,
