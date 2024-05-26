@@ -13,7 +13,7 @@ export class PathDataInterpolatorStack extends Stack {
 
     const interpolateFunction = new lambda.Function(this, "PathInterpolatorFunction", {
       code: lambda.Code.fromAsset("./lambda"), runtime: lambda.Runtime.PYTHON_3_12, handler: "main.handler",
-      environment: { "TABLE_NAME": table.tableName }, timeout: Duration.seconds(30)
+      environment: { "TABLE_NAME": table.tableName }, timeout: Duration.seconds(60)
     })
     const functionURL = interpolateFunction.addFunctionUrl({
       authType: lambda.FunctionUrlAuthType.NONE,
