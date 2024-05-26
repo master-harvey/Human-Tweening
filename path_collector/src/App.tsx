@@ -62,8 +62,8 @@ function App() {
 
   return (
     <div className="App">
-      <div onClick={() => recordData(records.current)}>
-        <p className="heading button">Submit</p>
+      <div>
+        <p className="heading button" onClick={() => recordData(records.current)}>Submit</p>
       </div>
       <div
         style={{
