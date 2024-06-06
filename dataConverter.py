@@ -1,10 +1,17 @@
+# Filename: dataConverter.py
+# Author: Haythem (Hayhay1231)
+# Purpose: to convert download of DynamoDB overall JSON to multiple JSON Files, to work easier? maybe?
+
+from dynamodb_json import json_util as DBjson
 import json
 
-with open('training_data.json') as json_file:
-    data = json.load(json_file)
-    for key, value in mydic.iteritems():
-        print(key, value)
+mousePaths = []
+count = 0
+with open('training_data.json') as f:
+    for jsonObj in f:
+        mousePath = DBjson.loads(jsonObj)
+        with open(f"convertedPaths/mousePath{count}.json", "w") as f:
+            json.dump(mousePath, f)
+        count = count + 1
 
 
-
-    
