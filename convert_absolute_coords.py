@@ -6,6 +6,7 @@ def preprocess_mouse_movements(data):
     
     for item in data:
         translation = item['translation']
+        timeframe = item['end_timestamp'] - item['start_timestamp']
         path = item['raw_path']
         
         steps = []
@@ -21,7 +22,7 @@ def preprocess_mouse_movements(data):
             prev_point = point
         
         # Construct the new object
-        results.append({"translation": {"x": translation[0], "y": translation[1]}, "steps": steps})
+        results.append({"translation": {"x": translation[0], "y": translation[1], "t": timeframe}, "steps": steps})
     
     return results
 
