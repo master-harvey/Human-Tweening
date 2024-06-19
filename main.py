@@ -84,8 +84,8 @@ def train(model, iterator, optimizer, criterion, clip):
     return epoch_loss / len(iterator)
 
 if __name__ == "__main__":
-    INPUT_DIM = 2  # Dimension of the input vector (e.g., 100, 200)
-    OUTPUT_DIM = 2  # Dimension of the output vectors (e.g., 1, 2)
+    INPUT_DIM = 3  # Dimension of the input vector (e.g., 100, 200)
+    OUTPUT_DIM = 3  # Dimension of the output vectors (e.g., 1, 2)
     HID_DIM = 128
     N_LAYERS = 2
     ENC_DROPOUT = 0.5
