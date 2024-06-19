@@ -57,11 +57,11 @@ class LSTMModel(nn.Module):
                 total_loss += loss.item()
                 
             avg_loss = total_loss / len(train_data)
-            
+            # if (epoch+1) % 10 == 0:
             print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {avg_loss:.4f}')
-            if (epoch+1) % 10 == 0:
-                torch.save(self.state_dict(), 'model.pth')
-                print('Model saved to model.pth')
+        
+        torch.save(self.state_dict(), 'model.pth')
+        print('Model saved to model.pth')
 
     def load_model(self, path):
         self.load_state_dict(torch.load(path))
@@ -96,7 +96,7 @@ if __name__ == "__main__":
             training_data = json.load(f)
         
         model = LSTMModel()
-        model.train_model(training_data, num_epochs=10000, learning_rate=0.1)
+        model.train_model(training_data)
     else:
         # Run inference
         input_vector = tuple(map(int, sys.argv[1].strip('()').split(',')))
