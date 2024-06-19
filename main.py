@@ -88,15 +88,11 @@ class LSTMModel(nn.Module):
 if __name__ == "__main__":
     if len(sys.argv) == 1:
         # Train the model
-        if not os.path.exists("preprocessed_training_data.json"):
-            print("Training data file not found!")
-            sys.exit(1)
-        
         with open("preprocessed_training_data.json", 'r') as f:
             training_data = json.load(f)
         
         model = LSTMModel()
-        model.train_model(training_data, num_epochs=10000, learning_rate=0.1)
+        model.train_model(training_data, num_epochs=10000) #Ctrl-C when ready
     else:
         # Run inference
         input_vector = tuple(map(int, sys.argv[1].strip('()').split(',')))
