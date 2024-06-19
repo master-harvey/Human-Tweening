@@ -1,9 +1,10 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
+from torch.utils.data import Dataset, DataLoader
 import json
 
-class VectorDataset(torch.Dataset):
+class VectorDataset(Dataset):
     def __init__(self, json_file):
         with open(json_file, 'r') as f:
             data = json.load(f)
@@ -101,7 +102,7 @@ if __name__ == "__main__":
     N_EPOCHS = 10
     CLIP = 1
 
-    train_iterator = torch.DataLoader(VectorDataset("preprocessed_training_data.json"), batch_size=32, shuffle=True)
+    train_iterator = DataLoader(VectorDataset("preprocessed_training_data.json"), batch_size=32, shuffle=True)
 
 
     for epoch in range(N_EPOCHS):
