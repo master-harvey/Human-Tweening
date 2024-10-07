@@ -20,3 +20,11 @@ html {
   background-color: gray;
   cursor: pointer;
 }
+
+.github {
+  color: #FFF
+}
+
+.github:hover {
+  color: #AAA
+}
