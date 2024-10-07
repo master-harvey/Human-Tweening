@@ -18,7 +18,7 @@ export class PathDataInterpolatorStack extends Stack {
     const functionURL = interpolateFunction.addFunctionUrl({
       authType: lambda.FunctionUrlAuthType.NONE,
       cors: {
-        allowedOrigins: ["https://tweeningdata.mastersautomation.tech/"],
+        allowedOrigins: ["https://tweeningdata.mastersautomation.tech"],
         allowedHeaders: ["content-type"],
         allowedMethods: [lambda.HttpMethod.PUT]
       }
